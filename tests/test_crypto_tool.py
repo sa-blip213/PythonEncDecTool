@@ -97,6 +97,7 @@ def test_invalid_aes_key(mock_showerror, crypto_tool, setup_file):
 @patch('tkinter.messagebox.showinfo')
 def test_save_load_rsa_key(mock_showinfo, mock_filedialog, crypto_tool, tmp_path):
     crypto_tool.generate_rsa_key()
+    mock_showinfo.reset_mock()  # Reset mock to ignore showinfo call from generate_rsa_key
     key_file = tmp_path / "RSA_private_key.pem"
     with open(key_file, 'wb') as f:
         f.write(crypto_tool.rsa_key.exportKey('PEM'))
@@ -148,6 +149,7 @@ def test_save_aes_key(mock_showinfo, mock_saveas, crypto_tool, tmp_path):
 @patch('tkinter.messagebox.showinfo')
 def test_save_rsa_key(mock_showinfo, mock_saveas, crypto_tool, tmp_path):
     crypto_tool.generate_rsa_key()
+    mock_showinfo.reset_mock()  # Reset mock to ignore showinfo call from generate_rsa_key
     key_file = tmp_path / "RSA_private_key.pem"
     mock_saveas.return_value = str(key_file)
     crypto_tool.save_rsa_key()
@@ -194,16 +196,14 @@ def test_aes_encryption_decryption_success(mock_saveas, mock_filedialog, crypto_
     input_file = tmp_path / "test.txt"
     with open(input_file, 'wb') as f:
         f.write(b"Test data")
-    encrypted_file = tmp_path / "test.aes_enc"
+    encrypted_file = tmp_path / "test.txt.aes_enc"  # Match CryptoAppv2.py behavior
     mock_filedialog.return_value = str(input_file)
     crypto_tool.file_path_var = type('obj', (), {'get': lambda x: str(input_file)})()
-    mock_saveas.return_value = str(encrypted_file)
-    crypto_tool.encrypt_file_aes()
+    crypto_tool.encrypt_file_aes()  # Output file is input_file + '.aes_enc'
     mock_filedialog.return_value = str(encrypted_file)
     crypto_tool.file_path_var = type('obj', (), {'get': lambda x: str(encrypted_file)})()
-    decrypted_file = tmp_path / "test.dec"
-    mock_saveas.return_value = str(decrypted_file)
-    crypto_tool.decrypt_file_aes()
+    decrypted_file = tmp_path / "test.txt.aes_enc.dec"  # Match CryptoAppv2.py behavior
+    crypto_tool.decrypt_file_aes()  # Output file is encrypted_file + '.dec'
     with open(decrypted_file, 'rb') as f:
         assert f.read() == b"Test data"
 
@@ -215,16 +215,14 @@ def test_rsa_encryption_decryption_success(mock_saveas, mock_filedialog, crypto_
     input_file = tmp_path / "test.txt"
     with open(input_file, 'wb') as f:
         f.write(b"Test data")
-    encrypted_file = tmp_path / "test.rsa_enc"
+    encrypted_file = tmp_path / "test.txt.rsa_enc"  # Match CryptoAppv2.py behavior
     mock_filedialog.return_value = str(input_file)
     crypto_tool.file_path_var = type('obj', (), {'get': lambda x: str(input_file)})()
-    mock_saveas.return_value = str(encrypted_file)
-    crypto_tool.encrypt_file_rsa()
+    crypto_tool.encrypt_file_rsa()  # Output file is input_file + '.rsa_enc'
     mock_filedialog.return_value = str(encrypted_file)
     crypto_tool.file_path_var = type('obj', (), {'get': lambda x: str(encrypted_file)})()
-    decrypted_file = tmp_path / "test.dec"
-    mock_saveas.return_value = str(decrypted_file)
-    crypto_tool.decrypt_file_rsa()
+    decrypted_file = tmp_path / "test.txt.rsa_enc.dec"  # Match CryptoAppv2.py behavior
+    crypto_tool.decrypt_file_rsa()  # Output file is encrypted_file + '.dec'
     with open(decrypted_file, 'rb') as f:
         assert f.read() == b"Test data"
 
