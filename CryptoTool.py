@@ -74,7 +74,7 @@ class CryptoTool:
         tk.Button(root, text="Generate File Hash (SHA-256)", command=self.generate_file_hash).pack(pady=10)
 
         self.result_var = tk.StringVar()
-        tk.Label(root, textvariable=self.result_var, font=("Arial", 10)).pack(pady=10)
+        tk.Label(root, textvariable=self.result_var, font=("Arial", 10), wraplength=300, height=4).pack(pady=10)
 
     def browse_file(self):
         file_path = filedialog.askopenfilename()
@@ -137,7 +137,7 @@ class CryptoTool:
             # Store public key fingerprint
             self.rsa_public_key_fingerprint = hashlib.sha256(self.rsa_key.publickey().exportKey('DER')).hexdigest()
             messagebox.showinfo("Success", "RSA key pair generated")
-            logging.info(f"Generated RSA key pair with public key fingerprint: {self.rsa_public_key_fingerprint}")
+            logging.info(f"Generated RSA key pair with public key")
         except Exception as e:
             messagebox.showerror("Error", f"RSA key generation failed: {e}")
             logging.error(f"RSA key generation error: {e}")
@@ -172,7 +172,7 @@ class CryptoTool:
                 self.rsa_public_key_fingerprint = hashlib.sha256(self.rsa_key.publickey().exportKey('DER')).hexdigest()
                 messagebox.showinfo("Success", f"RSA private key loaded from {file_path}")
                 logging.info(
-                    f"Loaded RSA private key from {file_path} with public key fingerprint: {self.rsa_public_key_fingerprint}")
+                    f"Loaded RSA private key from {file_path}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load RSA private key: {e}")
                 logging.error(f"RSA key load error: {e}")
@@ -265,7 +265,7 @@ class CryptoTool:
                 f.write(ciphertext)
             self.result_var.set(f"File encrypted to {output_file}")
             logging.info(
-                f"File encrypted (RSA): {output_file} with public key fingerprint: {self.rsa_public_key_fingerprint}")
+                f"File encrypted (RSA): {output_file}")
         except Exception as e:
             messagebox.showerror("Error", f"RSA encryption failed: {e}")
             logging.error(f"RSA encryption error: {e}")
@@ -295,7 +295,7 @@ class CryptoTool:
                 f.write(data)
             self.result_var.set(f"File decrypted to {output_file}")
             logging.info(
-                f"File decrypted (RSA): {output_file} with public key fingerprint: {self.rsa_public_key_fingerprint}")
+                f"File decrypted (RSA): {output_file}")
         except Exception as e:
             messagebox.showerror("Error",
                                  f"RSA decryption failed: {str(e)}. Ensure the correct private key is loaded and the file is not corrupted.")
